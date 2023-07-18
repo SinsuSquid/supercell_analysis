@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
 	// Output file
 	FILE *output = fopen("./supercell_MSD.dat","w");
 	if (output != NULL){
-		fprintf(output, "#\ttimestep\tmsd\n");
+		fprintf(output, "#\ttimestep\tmsd\tmsd_Li\n");
 	}
 	else{
 		printf("Error occured while opening \"supercell_MSD.dat\" file.\n");
@@ -127,24 +127,31 @@ int main(int argc, char* argv[])
 	}
 
 	long double squared[100000];
+	long double squared_Li[100000];
 	int numData[100000] = { 0 };
-	long double temp;
+	int numData_Li[100000] = { 0 };
+	long double temp, temp_Li;
 
 	for (int i = 1; i < maxTimestep; i++){
 		squared[i] = 0.0;
 		if (i % 100 == 0) printf("Calculating MSD for t = %d...\n", i);
 		for (int j = 1; j <= maxTimestep - i; j++){
 			if (j < EQ_LIMIT) continue;
-			temp = 0.0;
+			temp = 0.0; temp_Li = 0.0;
 			for (int k = 0; k < numParticle; k++){
-				temp += getDisplacement(k, j+i, j);
+				temp += getDisplacement(k, j, j+i);
+				if (trajectory[0].particle[k].atomType == 0)
+					temp_Li += getDisplacement(k, j, j+i);
 			}
 			temp /= numParticle;
+			temp_Li /= numLi;
 			squared[i] += temp;
-			numData[i] += 1;
+			squared_Li[i] += temp_Li;
+			numData[i] += 1; numData_Li[i] += 1;
 		}
 		squared[i] /= numData[i];
-		fprintf(output, "%d\t%10.8Lf\n", i, squared[i]);
+		squared_Li[i] /= numData_Li[i];
+		fprintf(output, "%d\t%10.8Lf%10.8LF", i, squared[i], squared_Li[i]);
 		// printf("numData[%d] = %d\n", i, numData[i]);
 	}
 
