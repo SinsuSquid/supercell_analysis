@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 		}
 		squared[i] /= numData[i];
 		squared_Li[i] /= numData_Li[i];
-		fprintf(output, "%d\t%10.8Lf%10.8LF", i, squared[i], squared_Li[i]);
+		fprintf(output, "%d\t%10.8Lf%10.8Lf\n", i, squared[i], squared_Li[i]);
 		// printf("numData[%d] = %d\n", i, numData[i]);
 	}
 
