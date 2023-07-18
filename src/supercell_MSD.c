@@ -132,15 +132,22 @@ int main(int argc, char* argv[])
 	int numData_Li[100000] = { 0 };
 	long double temp, temp_Li;
 
-	for (int i = 1; i < maxTimestep; i++){
+	/*
+		i : timegap
+		j : timegap starting point
+		k : particle index 
+	*/
+
+	for (int i = 1; i < maxTimestep - EQ_LIMIT; i++){
 		squared[i] = 0.0;
+		squared_Li[i] = 0.0;
 		if (i % 100 == 0) printf("Calculating MSD for t = %d...\n", i);
 		for (int j = 1; j <= maxTimestep - i; j++){
 			if (j < EQ_LIMIT) continue;
 			temp = 0.0; temp_Li = 0.0;
 			for (int k = 0; k < numParticle; k++){
 				temp += getDisplacement(k, j, j+i);
-				if (trajectory[0].particle[k].atomType == 0)
+				if (trajectory[1].particle[k].atomType == 0)
 					temp_Li += getDisplacement(k, j, j+i);
 			}
 			temp /= numParticle;
@@ -151,8 +158,7 @@ int main(int argc, char* argv[])
 		}
 		squared[i] /= numData[i];
 		squared_Li[i] /= numData_Li[i];
-		fprintf(output, "%d\t%10.8Lf%10.8Lf\n", i, squared[i], squared_Li[i]);
-		// printf("numData[%d] = %d\n", i, numData[i]);
+		fprintf(output, "%d\t%10.8Lf\t%10.8Lf\n", i, squared[i], squared_Li[i]);
 	}
 
 	printf("Done!\n");
