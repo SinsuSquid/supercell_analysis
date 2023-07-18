@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 {
 	// Argument check
 	if (argc != 2){
-		printf("\tUSAGE : ./supercell_MSD XDATCAR\n");
+		printf("\tUSAGE : ./supercell_MSD_Li XDATCAR\n");
 		exit(1);
 	}
 	FILE *input = fopen(argv[1], "r");
@@ -135,10 +135,10 @@ int main(int argc, char* argv[])
 		if (i % 100 == 0) printf("Calculating MSD for t = %d...\n", i);
 		for (int j = 1; j <= maxTimestep - i; j++){
 			temp = 0.0;
-			for (int k = 0; k < numParticle; k++){
+			for (int k = 0; k < numLi; k++){
 				temp += getDisplacement(k, j+i, j);
 			}
-			temp /= numParticle;
+			temp /= numLi;
 			squared[i] += temp;
 			numData[i] += 1;
 		}
