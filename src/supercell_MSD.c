@@ -5,7 +5,7 @@
 
 #define BIN_NUMBER 300
 #define TIME_GAP 100
-#define	EQ_LIMIT 3000 // First 3000 fs is for equilibration
+#define	EQ_LIMIT 300 // First 300 step is for equilibration
 
 typedef struct{
 	long double x;
@@ -134,6 +134,7 @@ int main(int argc, char* argv[])
 		squared[i] = 0.0;
 		if (i % 100 == 0) printf("Calculating MSD for t = %d...\n", i);
 		for (int j = 1; j <= maxTimestep - i; j++){
+			if (j < EQ_LIMIT) continue;
 			temp = 0.0;
 			for (int k = 0; k < numParticle; k++){
 				temp += getDisplacement(k, j+i, j);
