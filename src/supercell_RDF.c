@@ -6,6 +6,7 @@
 #define BIN_NUMBER 300
 #define TIME_GAP 100
 #define	RADIUS_MAX 6
+#define EQ_LIMIT 300 // Equilibration is completed at 900 fs
 
 typedef struct{
 	long double x;
@@ -117,9 +118,10 @@ int main(int argc, char* argv[])
 	printf("Maximum Timestep : %d\n", maxTimestep);
 
 	// Calculating RDF
-	FILE *output = fopen("./supercell_RDF.dat","w");
-	if (output != NULL){
-		fprintf(output, "#\ttimestep\tr\tg(r)\n");
+	FILE *output_gap = fopen("./supercell_RDF.dat","w");
+	FILE *output_eq = fopen("./supercell_RDF_postEQ.dat","w");
+	if (output_gap != NULL){
+		fprintf(output_gap, "#\ttimestep\tr\tg(r)\n");
 	}
 	else{
 		printf("Error occured while opening \"supercell_RDF.cat\" file.\n");
@@ -128,9 +130,12 @@ int main(int argc, char* argv[])
 
 	
 	int hist[BIN_NUMBER] = { 0 };
+	int hist_eq[BIN_NUMBER] = { 0 };
 	long double distance;
 	long double binSize = (long double)RADIUS_MAX / (long double)BIN_NUMBER;
 	int index;
+
+	for (int i = 0; i < BIN_NUMBER; i++) hist_eq[i] = 0;
 
 	for (int i = 1; i <= maxTimestep; i++){
 		// initializing histogram every 100 step
@@ -144,6 +149,8 @@ int main(int argc, char* argv[])
 				if (distance < (long double)RADIUS_MAX){
 					index = (int)(distance / binSize);
 					hist[index] = hist[index] + 2;
+					if (i > EQ_LIMIT)
+						hist_eq[index] += 2;
 				}
 			}
 		}
@@ -156,14 +163,24 @@ int main(int argc, char* argv[])
 				rdf /= (4 * M_PI * r * r * binSize);
 				rdf /= (numParticle * (numParticle -1) / (a.x * b.y * c.z));
 				// fprintf(stdout, "%d\t%Lf\t%10.8Lf\n" , i, r, rdf);
-				fprintf(output, "%d\t%Lf\t%10.8Lf\n" , i, r, rdf);
+				fprintf(output_gap, "%d\t%Lf\t%10.8Lf\n" , i, r, rdf);
 			}
 			printf("Now completed %d timestep...\n", i);
 		}
 	}
 
+	for (int i = 0; i < BIN_NUMBER; i++){
+		long double r, rdf;
+		r = (i + 0.5) * binSize;
+		rdf = hist_eq[i] / (long double)(maxTimestep - EQ_LIMIT);
+		rdf /= (4.0 * M_PI * r * r * binSize);
+		rdf /= (numParticle * (numParticle-1) / (a.x * b.y * c.z));
+		fprintf(output_eq, "%10.8Lf\t%10.8Lf\n", r, rdf);
+	}
+
 	fclose(input);
-	fclose(output);
+	fclose(output_gap);
+	fclose(output_eq);
 
 	return 0;
 }

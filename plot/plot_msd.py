@@ -4,9 +4,9 @@ import sys
 
 TIMESTEP = 3.0
 
-data = np.genfromtxt(sys.argv[1])
-
 plt.figure(figsize = (8,6))
+
+data = np.genfromtxt(sys.argv[1])
 
 plt.plot(data[:,0] * 3.0, data[:,1], label = 'All Atoms');
 plt.plot(data[:,0] * 3.0, data[:,2], label = 'Li+ ions');
