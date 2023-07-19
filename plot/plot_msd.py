@@ -8,7 +8,8 @@ data = np.genfromtxt(sys.argv[1])
 
 plt.figure(figsize = (8,6))
 
-plt.plot(data[:,0] * 3.0, data[:,1], label = 'MSD');
+plt.plot(data[:,0] * 3.0, data[:,1], label = 'All Atoms');
+plt.plot(data[:,0] * 3.0, data[:,2], label = 'Li+ ions');
 
 title = sys.argv[2]
 plt.title(f"Mean Squared Variance\n-{title}-")
