@@ -5,7 +5,7 @@
 
 #define BIN_NUMBER 300
 #define TIME_GAP 100
-#define	EQ_LIMIT 300 // First 300 step is for equilibration
+#define	EQ_LIMIT 300 // First 400 step is for equilibration
 
 typedef struct{
 	long double x;

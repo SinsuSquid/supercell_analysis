@@ -6,7 +6,7 @@
 #define BIN_NUMBER 300
 #define TIME_GAP 100
 #define	RADIUS_MAX 6
-#define EQ_LIMIT 300 // Equilibration is completed at 900 fs
+#define EQ_LIMIT 800 // Equilibration is completed at EQ_LIMIT * TIME_GAP fs
 
 typedef struct{
 	long double x;
